@@ -1,57 +1,62 @@
 package com.demo.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.List;
 
-@Entity
+//@Entity
 public class Student {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private String id;
+	private String name;
+	private String description;
+	private List<Course> courses;
 
-	private String firstName;
+	public Student(String id, String name, String description,
+			List<Course> courses) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.courses = courses;
+	}
 
-	private String lastName;
-
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getName() {
+		return name;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public Student() {
-		super();
+	public List<Course> getCourses() {
+		return courses;
 	}
 
-	public Student(String firstName, String lastName) {
-		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
+	public void setCourses(List<Course> courses) {
+		this.courses = courses;
 	}
 
 	@Override
 	public String toString() {
-		return "Student [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		return String.format(
+				"Student [id=%s, name=%s, description=%s, courses=%s]", id,
+				name, description, courses);
 	}
 
 }

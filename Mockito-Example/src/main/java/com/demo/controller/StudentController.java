@@ -1,37 +1,51 @@
 package com.demo.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.demo.entity.Student;
+import com.demo.entity.Course;
 import com.demo.service.StudentService;
+import com.demo.service.StudentServiceDB;
 
 @RestController
-@RequestMapping("/api/v1/students")
+@RequestMapping("/api/v1")
 public class StudentController {
 	@Autowired
-	StudentService studentService;
-	
-	@GetMapping
-	public ResponseEntity<List<Student>> getAll(){
-		List<Student> students = studentService.findAll();
-		if(students.isEmpty()) {
-			return new ResponseEntity<List<Student>>(HttpStatus.NO_CONTENT);
-		}
-		return new ResponseEntity<List<Student>>(students,HttpStatus.OK);
-	}
+	private StudentServiceDB studentService;
 
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Student createStudent(@RequestBody Student student) {
-		return studentService.createStudent(student);
+	@GetMapping("/students/{studentId}/courses")
+	public List<Course> retrieveCoursesForStudent(@PathVariable String studentId) {
+		return studentService.retrieveCourses(studentId);
+	}
+	
+	@GetMapping("/students/{studentId}/courses/{courseId}")
+	public Course retrieveDetailsForCourse(@PathVariable String studentId,
+			@PathVariable String courseId) {
+		return studentService.retrieveCourse(studentId, courseId);
+	}
+	
+	@PostMapping("/students/{studentId}/courses")
+	public ResponseEntity<Void> registerStudentForCourse(
+			@PathVariable String studentId, @RequestBody Course newCourse) {
+
+		Course course = studentService.addCourse(studentId, newCourse);
+
+		if (course == null)
+			return ResponseEntity.noContent().build();
+
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
+				"/{id}").buildAndExpand(course.getId()).toUri();
+
+		return ResponseEntity.created(location).build();
 	}
 }
